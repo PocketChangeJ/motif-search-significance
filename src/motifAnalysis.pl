@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#! /usr/bin/env perl
 
 BEGIN {
 	use File::Basename;
@@ -15,9 +15,6 @@ use motifAnalysis;
 use config;
 use vars qw(%config );
 *config=\%config::config;
-
-## Date : 06 Feb 2014
-## Author : Stephanie Le Gras
 
 ## Objectives : 
 
@@ -168,7 +165,7 @@ sub runMainAnalysis{
 
 	###### Getting fasta sequences out of the bed files (Controls and input)
 	if( ! -f "$outputDir/$prefix.fa.gz" ){
-		#&getFastafromBED($input, $genome, "$outputDir/$prefix.fa", $log);
+		&getFastafromBED($input, $genome, "$outputDir/$prefix.fa", $log);
 	}
 
 	###### Running motif analysis
@@ -178,21 +175,21 @@ sub runMainAnalysis{
 		my $out_dir="$outputDir/FIMO-$motifPrefix-$prefix";
 
 		if ( ! -f "$out_dir/fimo.txt" and -f "$outputDir/$prefix.fa.gz"){
-			#runSearchMotif("$outputDir/$prefix.fa.gz", $config{'motif'}{$motif}, "$out_dir", $log);
+			runSearchMotif("$outputDir/$prefix.fa.gz", $config{'motif'}{$motif}, "$out_dir", $log);
 		}
 
 		###### removing duplicate lines in FIMO results
 		my $outputFimo="fimo_uniq.txt";
 		if(! -f "$out_dir/$outputFimo"){
-			#&removeDuplicateLine($out_dir, $outputFimo, $log);
+			&removeDuplicateLine($out_dir, $outputFimo, $log);
 		}
 	
 	
 		###### Count motifs
 		my $output="$out_dir/CountOccurence-$prefix.tsv";
 		if(! -f "$output"){
-			#&countMotifs("$out_dir/$outputFimo", $config{'motif'}{$motif}, $output);
-			#&annotMotifName($config{'motif'}{$motif}, $output);
+			&countMotifs("$out_dir/$outputFimo", $config{'motif'}{$motif}, $output);
+			&annotMotifName($config{'motif'}{$motif}, $output);
 		}
 		
 		###### Count motif Co-occurence
@@ -203,11 +200,11 @@ sub runMainAnalysis{
 		}
 
 		###### Cleaning unused data
-    	#	unlink "$outputDir/$prefix.fa.gz";
-		#unlink "$outputDir/FIMO-$motifPrefix-$prefix/cisml.xml";
-		#unlink "$outputDir/FIMO-$motifPrefix-$prefix/fimo.gff";
-		#unlink "$outputDir/FIMO-$motifPrefix-$prefix/fimo.txt";
-		#`gzip $outputDir/FIMO-$motifPrefix-$prefix/$outputFimo`;
+    		unlink "$outputDir/$prefix.fa.gz";
+		unlink "$outputDir/FIMO-$motifPrefix-$prefix/cisml.xml";
+		unlink "$outputDir/FIMO-$motifPrefix-$prefix/fimo.gff";
+		unlink "$outputDir/FIMO-$motifPrefix-$prefix/fimo.txt";
+		`gzip $outputDir/FIMO-$motifPrefix-$prefix/$outputFimo`;
 
 	}
 	
